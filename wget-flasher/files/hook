@@ -1,0 +1,58 @@
+#!/bin/sh
+# Copyright (C) 2014-2016 Alexander Couzens
+
+DEFAULT_URL=http://repo.fe80.eu/bowl/pxe/
+DEFAULT_IMAGE=openwrt-x86-alix2-combined-ext4.img.gz
+
+get_arg_from_cmdline() {
+	local arg_name=$1
+	if ! grep -q "arg_name" /proc/cmdline ; then
+		return
+	fi
+	awk -F"$arg_name=" '{ print $2 }' /proc/cmdline  | awk '{ print $1 }'
+}
+
+get_url() {
+	if ! grep -q 'flash_url=' /proc/cmdline ; then
+		echo "$DEFAULT_URL"
+	fi
+	get_arg_from_cmdline flash_url
+}
+
+get_image() {
+	if ! grep -q 'flash_image=' /proc/cmdline ; then
+		echo "$DEFAULT_IMAGE"
+	fi
+	get_arg_from_cmdline flash_image
+}
+
+flash_openwrt() {
+	local image=$(get_image)
+	local url=$(get_url)
+
+	DIR=$(mktemp -d /tmp/up_XXXXXX)
+	cd $DIR
+	echo "Downloading OpenWrt Image"
+	wget  "$url/$image" -O image.gz
+	wget  "$url/md5sums" -O - | grep openwrt-x86-alix2-combined-ext4.img.gz > md5sums
+	if md5sum -c md5sums ; then
+		echo "Flashing /dev/sda"
+		cat image.gz | gunzip | dd of=/dev/sda bs=4M
+	else
+		for i in `seq 1 20`  ; do
+			echo "Checksum failed! Nothing changed!"
+			sleep 1
+		done
+	fi
+	reboot
+}
+
+wget_flasher() {
+	if grep -q 'flash_openwrt' /proc/cmdline ; then
+		udhcpc -i eth0
+		flash_openwrt
+	fi
+}
+
+boot_hook_add preinit_main wget_flasher
+
