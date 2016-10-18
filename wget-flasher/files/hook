@@ -1,7 +1,7 @@
 #!/bin/sh
 # Copyright (C) 2014-2016 Alexander Couzens
 
-DEFAULT_URL=http://repo.fe80.eu/bowl/pxe/
+DEFAULT_URL=http://repo.fe80.eu/bowl/pxe/current/
 DEFAULT_IMAGE=openwrt-x86-alix2-combined-ext4.img.gz
 
 get_arg_from_cmdline() {
