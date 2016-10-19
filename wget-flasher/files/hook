@@ -33,11 +33,11 @@ flash_openwrt() {
 	DIR=$(mktemp -d /tmp/up_XXXXXX)
 	cd $DIR
 	echo "Downloading OpenWrt Image"
-	wget  "$url/$image" -O image.gz
-	wget  "$url/md5sums" -O - | grep openwrt-x86-alix2-combined-ext4.img.gz > md5sums
+	wget  "$url/$image" -O $image
+	wget  "$url/md5sums" -O - | grep $image > md5sums
 	if md5sum -c md5sums ; then
 		echo "Flashing /dev/sda"
-		cat image.gz | gunzip | dd of=/dev/sda bs=4M
+		cat $image | gunzip | dd of=/dev/sda bs=4M
 	else
 		for i in `seq 1 20`  ; do
 			echo "Checksum failed! Nothing changed!"
