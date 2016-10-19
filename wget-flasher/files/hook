@@ -59,11 +59,20 @@ flash_openwrt() {
     reboot
 }
 
+load_kernel_modules() {
+    cd /lib/modules/$(uname -r)/ || return
+    for i in *.ko ; do
+        modprobe $i
+    done
+}
+
 wget_flasher() {
-	if grep -q 'flash_openwrt' /proc/cmdline ; then
-		udhcpc -i eth0
-		flash_openwrt
-	fi
+    if grep -q 'flash_openwrt' /proc/cmdline ; then
+        # some network module might missing
+        load_kernel_modules
+        udhcpc -i eth0
+        flash_openwrt
+    fi
 }
 
 boot_hook_add preinit_main wget_flasher
