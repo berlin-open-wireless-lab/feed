@@ -34,6 +34,8 @@ flash_openwrt() {
 	cd $DIR
 	echo "Downloading OpenWrt Image"
     for i in $(seq 1 5) ; do
+        # sleep between retries
+        sleep 1
         wget  "$url/$image" -O $image
         [ $? -ne 0 ] && continue
         wget  "$url/md5sums" -O - | grep $image > md5sums
