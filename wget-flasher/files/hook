@@ -33,18 +33,28 @@ flash_openwrt() {
 	DIR=$(mktemp -d /tmp/up_XXXXXX)
 	cd $DIR
 	echo "Downloading OpenWrt Image"
-	wget  "$url/$image" -O $image
-	wget  "$url/md5sums" -O - | grep $image > md5sums
-	if md5sum -c md5sums ; then
-		echo "Flashing /dev/sda"
-		cat $image | gunzip | dd of=/dev/sda bs=4M
-	else
-		for i in `seq 1 20`  ; do
-			echo "Checksum failed! Nothing changed!"
-			sleep 1
-		done
-	fi
-	reboot
+    for i in $(seq 1 5) ; do
+        wget  "$url/$image" -O $image
+        [ $? -ne 0 ] && continue
+        wget  "$url/md5sums" -O - | grep $image > md5sums
+        [ $? -ne 0 ] && continue
+        if md5sum -c md5sums ; then
+            echo "Flashing /dev/sda"
+            cat $image | gunzip | dd of=/dev/sda bs=4M
+            for i in $(seq 1 20) ; do
+                echo "Successfull flashed image. Rebooting now."
+                sleep 1
+            done
+            reboot
+        else
+            continue
+        fi
+    done
+    for i in `seq 1 20`  ; do
+        echo "Flashing failed. Rebooting now."
+        sleep 1
+    done
+    reboot
 }
 
 wget_flasher() {
