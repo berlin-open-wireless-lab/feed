@@ -64,6 +64,7 @@ load_kernel_modules() {
     for i in *.ko ; do
         modprobe $i
     done
+    sleep 5
 }
 
 wget_flasher() {
