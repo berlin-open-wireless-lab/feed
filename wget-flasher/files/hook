@@ -88,6 +88,7 @@ wget_flasher() {
     if grep -q 'flash_openwrt' /proc/cmdline ; then
         # some network module might missing
         load_kernel_modules
+        ip link set lo up
         udhcpc -i eth0
         echo 'nameserver 8.8.8.8' > /etc/resolv.conf
         flash_openwrt
