@@ -11,3 +11,9 @@ wget-flasher
 
 Flash an OpenWrt image to the flash. Intended for initramfs images.
 It flashes a default image to /dev/sda
+
+autopwgen
+^^^^^^^^^
+
+Will autogenerate a new password if empty.
+
