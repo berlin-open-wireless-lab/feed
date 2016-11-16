@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=autopwgen
 PKG_VERSION:=2016-11-16
-PKG_RELEASE=$(PKG_SOURCE_VERSION)
+PKG_RELEASE=2
 
 PKG_MAINTAINER:=Alexander Couzens <lynxis@fe80.eu>
 

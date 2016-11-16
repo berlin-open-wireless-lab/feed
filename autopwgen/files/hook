@@ -2,7 +2,7 @@
 # Copyright (C) 2014-2016 Alexander Couzens
 
 autopwgen() {
-    if grep -q '^root::' shadow ; then
+    if grep -q '^root::' /etc/shadow ; then
         logger -t autopwgen -p daemon.info "Auto generate a new password for root"
         password="$(dd if=/dev/urandom bs=512 count=1 2>/dev/null | md5sum - | cut -c1-16)"
         echo -e "$password\n$password\n" | passwd root
