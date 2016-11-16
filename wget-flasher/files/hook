@@ -72,6 +72,7 @@ wget_flasher() {
         # some network module might missing
         load_kernel_modules
         udhcpc -i eth0
+        echo 'nameserver 8.8.8.8' > /etc/resolv.conf
         flash_openwrt
     fi
 }

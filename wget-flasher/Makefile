@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wget-flasher
-PKG_VERSION:=2016-10-20
+PKG_VERSION:=2016-11-16
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
 PKG_MAINTAINER:=Alexander Couzens <lynxis@fe80.eu>
