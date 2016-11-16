@@ -68,12 +68,12 @@ flash_openwrt() {
         if md5sum -c md5sums ; then
             echo "Flashing /dev/sda"
             cat $image | gunzip | dd of=/dev/sda bs=4M
-            doreboot 1
+            do_reboot 1
         else
             continue
         fi
     done
-    doreboot 0
+    do_reboot 0
 }
 
 load_kernel_modules() {
