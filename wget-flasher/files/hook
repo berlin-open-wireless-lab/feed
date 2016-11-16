@@ -26,6 +26,31 @@ get_image() {
 	get_arg_from_cmdline flash_image
 }
 
+do_reboot() {
+    local success=$1
+    local doreboot=1
+
+    if grep -q NOREBOOT /proc/cmdline ; then
+        doreboot=0
+    fi
+
+    if [ $success -eq 1 ] ; then
+        for i in $(seq 1 20) ; do
+            echo "Successfull flashed image. Rebooting now."
+            sleep 1
+        done
+    else
+        for i in `seq 1 20`  ; do
+            echo "Flashing failed. Rebooting now."
+            sleep 1
+        done
+    fi
+
+    if [ $doreboot -eq 1 ] ; then
+        reboot
+    fi
+}
+
 flash_openwrt() {
 	local image=$(get_image)
 	local url=$(get_url)
@@ -43,20 +68,12 @@ flash_openwrt() {
         if md5sum -c md5sums ; then
             echo "Flashing /dev/sda"
             cat $image | gunzip | dd of=/dev/sda bs=4M
-            for i in $(seq 1 20) ; do
-                echo "Successfull flashed image. Rebooting now."
-                sleep 1
-            done
-            reboot
+            doreboot 1
         else
             continue
         fi
     done
-    for i in `seq 1 20`  ; do
-        echo "Flashing failed. Rebooting now."
-        sleep 1
-    done
-    reboot
+    doreboot 0
 }
 
 load_kernel_modules() {
